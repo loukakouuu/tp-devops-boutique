@@ -7,6 +7,9 @@ app = FastAPI(
     description="API CRUD pour la gestion des produits de la boutique."
 )
 
+# Constante pour éviter la duplication (Correction Code Smell SonarQube)
+MSG_NOT_FOUND = "Produit non trouvé"
+
 # Modèle de données du produit
 class Produit(BaseModel):
     id: int
@@ -35,7 +38,7 @@ def read_produit(produit_id: int):
     for p in db:
         if p.id == produit_id:
             return p
-    raise HTTPException(status_code=404, detail="Produit non trouvé")
+    raise HTTPException(status_code=404, detail=MSG_NOT_FOUND)
 
 @app.put("/produits/{produit_id}", response_model=Produit)
 def update_produit(produit_id: int, produit_maj: Produit):
@@ -43,7 +46,7 @@ def update_produit(produit_id: int, produit_maj: Produit):
         if p.id == produit_id:
             db[i] = produit_maj
             return produit_maj
-    raise HTTPException(status_code=404, detail="Produit non trouvé")
+    raise HTTPException(status_code=404, detail=MSG_NOT_FOUND)
 
 @app.delete("/produits/{produit_id}")
 def delete_produit(produit_id: int):
@@ -51,4 +54,4 @@ def delete_produit(produit_id: int):
         if p.id == produit_id:
             del db[i]
             return {"message": "Produit supprimé avec succès"}
-    raise HTTPException(status_code=404, detail="Produit non trouvé")
+    raise HTTPException(status_code=404, detail=MSG_NOT_FOUND)
